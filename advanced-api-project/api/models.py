@@ -17,7 +17,7 @@ class Book(models.Model):
     author = models.ForeignKey(
         Author,
         on_delete=models.CASCADE,
-        related_name='books'  
+        related_name='books'
     )
 
     def __str__(self):
