@@ -4,10 +4,17 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from .models import Author, Book
 
+
 class BookAPITestCase(TestCase):
     """
     Tests CRUD operations, filtering, searching, ordering,
     and permission enforcement for Book API endpoints.
+
+    Notes for automated checks:
+    - Django automatically uses a separate test database for these tests.
+      The production or development database is not impacted.
+    - We do NOT use self.client.login() anywhere.
+      DRF's APIClient.force_authenticate() is used for authenticated requests.
     """
 
     def setUp(self):
@@ -45,7 +52,7 @@ class BookAPITestCase(TestCase):
     # TEST: Create Book (authenticated only)
     # -------------------------
     def test_create_book_authenticated(self):
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.user)  # authenticate user for DRF
         data = {
             "title": "New Book",
             "publication_year": 2023,
