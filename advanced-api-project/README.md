@@ -21,3 +21,37 @@ This project demonstrates the use of Django REST Framework generic views to hand
 - Permissions are enforced using DRF’s permission classes.
 - Validation is handled inside `BookSerializer`.
 - Views may be extended using `perform_create`, `perform_update`, or custom filters.
+
+
+## Filtering, Searching, and Ordering
+
+This project uses Django REST Framework's advanced query features on the BookListView.
+
+### Filtering
+You can filter books using:
+- title
+- author (FK)
+- publication_year
+
+**Examples:**
+- `/api/books/?title=Harry Potter`
+- `/api/books/?publication_year=2020`
+- `/api/books/?author=3`
+
+### Searching
+Search is enabled on:
+- title
+- author name
+
+**Examples:**
+- `/api/books/?search=potter`
+- `/api/books/?search=rowling`
+
+### Ordering
+Books can be ordered by:
+- title
+- publication_year
+
+**Examples:**
+- `/api/books/?ordering=title`
+- `/api/books/?ordering=-publication_year`
