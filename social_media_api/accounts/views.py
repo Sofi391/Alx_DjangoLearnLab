@@ -12,12 +12,12 @@ class SignupViewSet(CreateAPIView):
     serializer_class = SignupSerializer
     queryset = User.objects.all()
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        token = Token.objects.create(user=user)
-        return Response({'token': token.key},status=status.HTTP_201_CREATED)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     user = serializer.save()
+    #     token = Token.objects.create(user=user)
+    #     return Response({'token': token.key},status=status.HTTP_201_CREATED)
 
 class ProfileViewSet(RetrieveAPIView):
     serializer_class = ProfileSerializer
