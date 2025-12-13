@@ -1,10 +1,13 @@
-from rest_framework import status
+from rest_framework import status,generics
 from rest_framework.response import Response
 from .serializers import SignupSerializer,ProfileSerializer
 from rest_framework.generics import CreateAPIView,RetrieveAPIView
 from .models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 # Create your views here.
@@ -30,5 +33,34 @@ class ProfileViewSet(RetrieveAPIView):
         return queryset
 
 
+class FollowView(generics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def perform_update(self, serializer):
+        current_user = self.request.user
+        target_user_id = serializer.validated_data['target_user_id']
+        target_user = User.objects.get(id=target_user_id)
+
+        if target_user in current_user.following.all():
+            current_user.following.remove(target_user)
+            action = 'unfollowed'
+        else:
+            current_user.following.add(target_user)
+            action = 'followed'
+
+        current_user.save()
+        serializer.instance = current_user
+        return action
+
+    def put(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        action = self.perform_update(serializer)
+        return Response({'status': action})
 
 

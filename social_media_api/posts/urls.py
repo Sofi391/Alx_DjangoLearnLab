@@ -8,6 +8,5 @@ router.register('comments', CommentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('follow/', FollowView.as_view(), name='follow-toggle'),
     path('feed/', FeedView.as_view(), name='feed'),
 ]

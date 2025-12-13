@@ -1,13 +1,9 @@
-from django.contrib.auth import get_user_model
 from rest_framework import viewsets, filters, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer, FollowSerializer
 from .permissions import IsOwnerOrReadOnly
-
-User = get_user_model()
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -54,38 +50,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-
-class FollowView(generics.GenericAPIView):
-    queryset = User.objects.all()
-    serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-    def perform_update(self, serializer):
-        current_user = self.request.user
-        target_user_id = serializer.validated_data['target_user_id']
-        target_user = User.objects.get(id=target_user_id)
-
-        if target_user in current_user.following.all():
-            current_user.following.remove(target_user)
-            action = 'unfollowed'
-        else:
-            current_user.following.add(target_user)
-            action = 'followed'
-
-        current_user.save()
-        serializer.instance = current_user
-        return action
-
-    def put(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        action = self.perform_update(serializer)
-        return Response({'status': action})
-
 
 class FeedView(generics.ListAPIView):
     serializer_class = PostSerializer
