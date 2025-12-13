@@ -1,13 +1,13 @@
-from rest_framework import status,generics
+from rest_framework import status,generics,permissions
 from rest_framework.response import Response
-from .serializers import SignupSerializer,ProfileSerializer
+from .serializers import SignupSerializer,ProfileSerializer,FollowSerializer
 from rest_framework.generics import CreateAPIView,RetrieveAPIView
 from .models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
+CustomUser = get_user_model()
 
 
 # Create your views here.
@@ -34,9 +34,9 @@ class ProfileViewSet(RetrieveAPIView):
 
 
 class FollowView(generics.GenericAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
