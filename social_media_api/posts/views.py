@@ -1,8 +1,8 @@
-from rest_framework import viewsets, filters, generics
+from rest_framework import viewsets, filters, generics,permissions
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer, FollowSerializer
+from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
@@ -51,9 +51,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+
 class FeedView(generics.ListAPIView):
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         following_users = self.request.user.following.all()
