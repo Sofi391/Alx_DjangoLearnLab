@@ -1,28 +1,24 @@
-from rest_framework import viewsets
-from rest_framework.generics import UpdateAPIView, ListAPIView
-from .models import Post,Comment
-from .serializers import PostSerializer, CommentSerializer,FollowSerializer
-from .permissions import IsOwnerOrReadOnly
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import filters,generics
-from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth import get_user_model
+from rest_framework import viewsets, filters, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer, FollowSerializer
+from .permissions import IsOwnerOrReadOnly
+
+User = get_user_model()
 
 
-
-
-# Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'id'
     pagination_class = PageNumberPagination
-    # permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
-    filter_backends = [filters.SearchFilter,filters.OrderingFilter]
-    search_fields = ['title','content']
-    ordering_fields = ['created_at','updated_at']
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'content']
+    ordering_fields = ['created_at', 'updated_at']
     ordering_field = '-created_at'
 
     def get_queryset(self):
@@ -33,11 +29,11 @@ class PostViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_permissions(self):
-        if self.action == 'retrieve' or self.action == 'list':
+        if self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-        return [permissions() for permissions in permission_classes]
+        return [perm() for perm in permission_classes]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -51,15 +47,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
-    filter_backends = [filters.SearchFilter,filters.OrderingFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['content']
-    ordering_fields = ['created_at','updated_at']
+    ordering_fields = ['created_at', 'updated_at']
     ordering_field = '-created_at'
 
     def perform_create(self, serializer):
-        return serializer.save(author=self.request.user)
+        serializer.save(author=self.request.user)
 
-User = get_user_model()
 
 class FollowView(generics.GenericAPIView):
     queryset = User.objects.all()
@@ -67,7 +62,6 @@ class FollowView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        # The object being updated is always the current user
         return self.request.user
 
     def perform_update(self, serializer):
@@ -93,12 +87,10 @@ class FollowView(generics.GenericAPIView):
         return Response({'status': action})
 
 
-class FeedView(ListAPIView):
+class FeedView(generics.ListAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         following_users = self.request.user.following.all()
-        queryset = Post.objects.filter(author__in=following_users).order_by('-created_at')
-        return queryset
-
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')
