@@ -7,5 +7,5 @@ class User(AbstractUser):
     profile_picture = models.ImageField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
 
-    followers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='following', blank=True,symmetrical=False)
-
+    followers = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='following_users',blank=True,symmetrical=False)
+    following = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='follower_users',blank=True,symmetrical=False)

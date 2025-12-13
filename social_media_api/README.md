@@ -77,3 +77,34 @@ Only the comment author can update
 
 Delete Comment: DELETE /comments/<comment_id>/
 Only the comment author can delete
+
+
+User Follow & Feed Features
+
+Follow / Unfollow Users:
+
+Users can follow or unfollow other users.
+
+Endpoint updates the current user’s following list.
+
+Users cannot follow/unfollow themselves.
+
+Feed:
+
+Displays posts from users the current user follows.
+
+Posts are ordered by creation date, newest first.
+
+Helps users stay updated with content from followed accounts.
+
+Changes to User Model:
+
+Added following field (ManyToMany to User) to track users being followed.
+
+Added followers field (ManyToMany to User) to track users following the account.
+
+Usage Notes:
+
+Only authenticated users can follow/unfollow or access the feed.
+
+Feed does not include posts from users the current user does not follow.
