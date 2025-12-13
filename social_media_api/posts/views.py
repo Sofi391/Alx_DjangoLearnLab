@@ -4,10 +4,12 @@ from .models import Post,Comment
 from .serializers import PostSerializer, CommentSerializer,FollowSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import filters
+from rest_framework import filters,generics
 from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
+
+
 
 
 # Create your views here.
@@ -59,7 +61,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 User = get_user_model()
 
-class FollowView(UpdateAPIView):
+class FollowView(generics.GenericAPIView):
+    queryset = User.objects.all()
     serializer_class = FollowSerializer
     permission_classes = [IsAuthenticated]
 
@@ -80,10 +83,10 @@ class FollowView(UpdateAPIView):
             action = 'followed'
 
         current_user.save()
-        serializer.instance = current_user  # update the instance reference
+        serializer.instance = current_user
         return action
 
-    def update(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         action = self.perform_update(serializer)
@@ -92,6 +95,7 @@ class FollowView(UpdateAPIView):
 
 class FeedView(ListAPIView):
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         following_users = self.request.user.following.all()
