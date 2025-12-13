@@ -1,5 +1,4 @@
-from rest_framework.decorators import permission_classes
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import viewsets
 from .models import Post,Comment
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
@@ -9,7 +8,7 @@ from rest_framework.pagination import PageNumberPagination
 
 
 # Create your views here.
-class PostViewSet(ModelViewSet):
+class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'id'
@@ -39,7 +38,7 @@ class PostViewSet(ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-class CommentViewSet(ModelViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     lookup_field = 'id'
