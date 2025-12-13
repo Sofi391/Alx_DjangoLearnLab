@@ -39,3 +39,41 @@ password is stored securely (hashed)
 bio and profile_picture are optional
 
 followers is a many-to-many relationship to other users
+
+Social Media API — Posts & Comments
+Posts
+
+List Posts: GET /posts/
+Supports search: ?search=keyword
+Supports ordering: ?ordering=created_at or ?ordering=-created_at
+Pagination applied: ?page=1
+
+Create Post: POST /posts/
+Required fields: title, content
+Author is automatically assigned (authenticated user)
+
+Retrieve Post: GET /posts/<id>/
+
+Update Post: PUT /posts/<id>/
+Only the post author can update
+
+Delete Post: DELETE /posts/<id>/
+Only the post author can delete
+
+Comments
+
+List Comments: GET /comments/
+Supports search: ?search=keyword
+Pagination applied: ?page=1
+
+Create Comment: POST /comments/
+Required fields: post (Post ID), content
+Author is automatically assigned (authenticated user)
+
+Retrieve Comment: GET /comments/<comment_id>/
+
+Update Comment: PUT /comments/<comment_id>/
+Only the comment author can update
+
+Delete Comment: DELETE /comments/<comment_id>/
+Only the comment author can delete
