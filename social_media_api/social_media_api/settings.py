@@ -77,15 +77,17 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 
 # Database
-# Use environment variable DATABASE_URL for production (PostgreSQL recommended)
-import dj_database_url
-
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'mydb'),
+        'USER': os.getenv('DB_USER', 'user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'password'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+    }
 }
+
 
 
 # Password validation
@@ -111,6 +113,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # for collectstatic in production
 # Optional: add WhiteNoise for serving static files
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# In production, run `python manage.py collectstatic` to collect static files.
+# Media files are served from MEDIA_ROOT; configure S3 or another storage in real production.
 
 
 # Django REST Framework
