@@ -24,3 +24,14 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Commented by-{self.author.username}"
+
+
+class Like(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,related_name="likes")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="likes")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("post", "user")
+    def __str__(self):
+        return f"{self.post.title}-{self.user.username}"

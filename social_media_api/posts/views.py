@@ -1,9 +1,12 @@
-from rest_framework import viewsets, filters, generics,permissions
+from rest_framework import viewsets, filters, generics, permissions, status
+from rest_framework.generics import CreateAPIView,GenericAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer
+from rest_framework.response import Response
+from .models import Post, Comment,Like
+from .serializers import PostSerializer, CommentSerializer,LikeSerializer
 from .permissions import IsOwnerOrReadOnly
+from django.shortcuts import get_object_or_404
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -59,3 +62,46 @@ class FeedView(generics.ListAPIView):
     def get_queryset(self):
         following_users = self.request.user.following.all()
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+
+class LikeView(GenericAPIView):
+    serializer_class = LikeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+
+        like, created = Like.objects.get_or_create(
+            post=post,
+            user=request.user
+        )
+
+        if not created:
+            return Response(
+                {'message': 'You already liked this post'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            {'message': 'Post liked successfully'},
+            status=status.HTTP_201_CREATED
+        )
+
+
+class UnLikeView(GenericAPIView):
+    serializer_class = LikeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        if Like.objects.filter(post_id=post_id, user=request.user).exists():
+            like = Like.objects.get(post_id=post_id, user=request.user)
+            like.delete()
+            return Response(
+                {'message': 'You unliked a post'},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            {'message': 'You have not liked this post'},
+            status=status.HTTP_201_CREATED
+        )
+

@@ -108,3 +108,15 @@ Usage Notes:
 Only authenticated users can follow/unfollow or access the feed.
 
 Feed does not include posts from users the current user does not follow.
+
+Like Posts: Users can like and unlike posts. Each like is unique per user per post.
+
+Notifications: Users receive notifications when:
+
+Someone likes their post
+
+They get a new follower
+
+Someone comments on their post
+
+These features enhance user engagement and interaction on the platform.
