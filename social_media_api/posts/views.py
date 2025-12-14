@@ -70,7 +70,7 @@ class LikeView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        post = generics.get_object_or_404(Post, id=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
 
         like, created = Like.objects.get_or_create(
             post=post,
