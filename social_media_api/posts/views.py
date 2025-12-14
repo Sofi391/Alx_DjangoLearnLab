@@ -7,6 +7,7 @@ from .models import Post, Comment,Like
 from .serializers import PostSerializer, CommentSerializer,LikeSerializer
 from .permissions import IsOwnerOrReadOnly
 from django.shortcuts import get_object_or_404
+from notifications.models import Notification
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -68,8 +69,8 @@ class LikeView(GenericAPIView):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, post_id):
-        post = get_object_or_404(Post, id=post_id)
+    def post(self, request, pk):
+        post = get_object_or_404(Post, id=pk)
 
         like, created = Like.objects.get_or_create(
             post=post,
@@ -81,6 +82,12 @@ class LikeView(GenericAPIView):
                 {'message': 'You already liked this post'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        Notification.objects.create(
+            recipient=post.author,
+            actor=request.user,
+            verb="Liked your post",
+            target=post.title,
+        )
 
         return Response(
             {'message': 'Post liked successfully'},
@@ -92,9 +99,9 @@ class UnLikeView(GenericAPIView):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, post_id):
-        if Like.objects.filter(post_id=post_id, user=request.user).exists():
-            like = Like.objects.get(post_id=post_id, user=request.user)
+    def post(self, request, pk):
+        if Like.objects.filter(post_id=pk, user=request.user).exists():
+            like = Like.objects.get(post_id=pk, user=request.user)
             like.delete()
             return Response(
                 {'message': 'You unliked a post'},
