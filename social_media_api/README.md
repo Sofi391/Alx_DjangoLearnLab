@@ -1,122 +1,77 @@
-Social Media API
+# Social Media API
 
-A simple Django REST Framework API for user registration, login, and profile management.
+A simple **Django REST Framework** API for user registration, login, profile management, posts, comments, likes, follows, and notifications.
 
-Features
+---
 
-Custom user model with username, email, bio, profile picture, and followers
+## Live Demo
 
-User registration with password confirmation
+[View Live App](https://your-live-link.com)
 
-Token-based authentication for secure login
+---
 
-Retrieve user profiles by username
+## Features
 
-Setup
+- **Custom User Model:** username, email, bio, profile picture, followers/following  
+- **Authentication:** Token-based login & registration  
+- **Posts & Comments:** Create, read, update, delete with search, ordering, and pagination  
+- **Follow/Unfollow:** Users can follow/unfollow others and see a personalized feed  
+- **Likes & Notifications:** Like/unlike posts, receive notifications for likes, new followers, and comments  
 
-Clone the repository and create a virtual environment
+---
 
-Install dependencies
+## Setup
 
-Apply migrations and create a superuser if needed
+1. Clone the repository  
+2. Create a virtual environment  
+3. Install dependencies:  
+   ```bash
+   pip install -r requirements.txt
+   python manage.py migrate
+   python manage.py createsuperuser
+   python manage.py runserver
+   ```
+   
+---
 
-Run the development server
+## API Endpoints Overview
 
-API Endpoints
+### Users
+- **Register:** `POST /register/`
+- **Login:** `POST /login/`
+- **Profile:** `GET /profile/<username>/`
 
-Register: Create a new user and receive an authentication token
+### Posts
+- **List:** `GET /posts/` (supports search & ordering)
+- **Create:** `POST /posts/`
+- **Retrieve/Update/Delete:** `GET | PUT | DELETE /posts/<id>/`
 
-Login: Obtain token using username and password
+### Comments
+- **List:** `GET /comments/`
+- **Create:** `POST /comments/`
+- **Retrieve/Update/Delete:** `GET | PUT | DELETE /comments/<comment_id>/`
 
-Profile: Retrieve user profile by username
+### Follow & Feed
+- **Follow/Unfollow:** `POST /follow/<user_id>/`, `POST /unfollow/<user_id>/`
+- **Feed:** `GET /feed/`
 
-User Model Overview
+### Likes & Notifications
+- **Like/Unlike Post:** `POST /posts/<post_id>/like/`, `POST /posts/<post_id>/unlike/`
+- **View Notifications:** `GET /notifications/`
 
-username and email are unique identifiers
+---
 
-password is stored securely (hashed)
+## Notes
+- Only authenticated users can follow/unfollow, like posts, or access the feed.
+- Notifications enhance engagement by alerting users to interactions on their posts.
 
-bio and profile_picture are optional
+---
 
-followers is a many-to-many relationship to other users
+## 👩‍💻 About the Developer
 
-Social Media API — Posts & Comments
-Posts
+Hi! I’m Sofi, a Software Engineering student at **AASTU** and an **ALX Backend Program participant**.  
+I’m passionate about Python, web development, and creating full-stack applications that are both functional and user-friendly.
 
-List Posts: GET /posts/
-Supports search: ?search=keyword
-Supports ordering: ?ordering=created_at or ?ordering=-created_at
-Pagination applied: ?page=1
-
-Create Post: POST /posts/
-Required fields: title, content
-Author is automatically assigned (authenticated user)
-
-Retrieve Post: GET /posts/<id>/
-
-Update Post: PUT /posts/<id>/
-Only the post author can update
-
-Delete Post: DELETE /posts/<id>/
-Only the post author can delete
-
-Comments
-
-List Comments: GET /comments/
-Supports search: ?search=keyword
-Pagination applied: ?page=1
-
-Create Comment: POST /comments/
-Required fields: post (Post ID), content
-Author is automatically assigned (authenticated user)
-
-Retrieve Comment: GET /comments/<comment_id>/
-
-Update Comment: PUT /comments/<comment_id>/
-Only the comment author can update
-
-Delete Comment: DELETE /comments/<comment_id>/
-Only the comment author can delete
-
-
-User Follow & Feed Features
-
-Follow / Unfollow Users:
-
-Users can follow or unfollow other users.
-
-Endpoint updates the current user’s following list.
-
-Users cannot follow/unfollow themselves.
-
-Feed:
-
-Displays posts from users the current user follows.
-
-Posts are ordered by creation date, newest first.
-
-Helps users stay updated with content from followed accounts.
-
-Changes to User Model:
-
-Added following field (ManyToMany to User) to track users being followed.
-
-Added followers field (ManyToMany to User) to track users following the account.
-
-Usage Notes:
-
-Only authenticated users can follow/unfollow or access the feed.
-
-Feed does not include posts from users the current user does not follow.
-
-Like Posts: Users can like and unlike posts. Each like is unique per user per post.
-
-Notifications: Users receive notifications when:
-
-Someone likes their post
-
-They get a new follower
-
-Someone comments on their post
-
-These features enhance user engagement and interaction on the platform.
+### 🤳 Connect with me:
+[<img align="left" alt="LinkedIn" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/linkedin.svg" />][linkedin]
+[<img align="left" alt="GitHub" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/github.svg" />][github] 

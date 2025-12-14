@@ -69,3 +69,5 @@ coverage.xml
 
 # Windows
 Thumbs.db
+
+db.sqlite3
